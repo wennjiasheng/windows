@@ -1,0 +1,2 @@
+#TargetFrameworkVersion=v4.0:PlatformToolSet=v120:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit
+Debug|Win32|D:\vs 比特\求Sn=a+aa+aaa+aaaa+aaaaa的前5项之和，其中a是一个数字，\|
