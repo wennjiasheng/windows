@@ -1,0 +1,33 @@
+﻿生成启动时间为 2019/1/19 12:29:11。
+     1>项目“C:\Users\温家盛\documents\visual studio 2013\Projects\双向链表\双向链表\双向链表.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt 20190118test.c Dlist.c
+         Dlist.c
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(7): error C2082: 形参“DlistInit”的重定义
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(7): error C2143: 语法错误 : 缺少“;”(在“{”的前面)
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(8): error C2065: “Phead”: 未声明的标识符
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(8): error C2100: 非法的间接寻址
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(9): error C2065: “Phead”: 未声明的标识符
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(9): error C2100: 非法的间接寻址
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(9): error C2223: “->_pnext”的左侧必须指向结构/联合
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(10): error C2065: “Phead”: 未声明的标识符
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(10): error C2100: 非法的间接寻址
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(10): error C2223: “->_ppre”的左侧必须指向结构/联合
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(11): error C2065: “Phead”: 未声明的标识符
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(11): error C2100: 非法的间接寻址
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(11): warning C4047: “=”:“int”与“void *”的间接级别不同
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(21): warning C4033: “buyDlist”必须返回值
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(87): warning C4033: “DlistFind”必须返回值
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(98): warning C4033: “DlistFind”必须返回值
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.c(150): error C2084: 函数“void test()”已有主体
+                 c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\dlist.h(23) : 参见“test”的前一个定义
+         20190118test.c
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\20190118test.c(6): error C2085: “main”: 不在形参表中
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\20190118test.c(6): error C2143: 语法错误 : 缺少“;”(在“{”的前面)
+     1>c:\users\温家盛\documents\visual studio 2013\projects\双向链表\双向链表\20190118test.c(9): warning C4098: “test”:“void”函数返回值
+         正在生成代码...
+     1>已完成生成项目“C:\Users\温家盛\documents\visual studio 2013\Projects\双向链表\双向链表\双向链表.vcxproj”(Rebuild 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:00.71
