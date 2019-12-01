@@ -1,0 +1,11 @@
+﻿生成启动时间为 2019/11/25 17:33:36。
+     1>项目“D:\vs 比特\c++\20191125\20191125\20191125.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "源.cpp"
+         源.cpp
+     1>d:\vs 比特\c++\20191125\20191125\源.cpp(139): fatal error C1075: 与左侧的 大括号“{”(位于“d:\vs 比特\c++\20191125\20191125\源.cpp(52)”)匹配之前遇到文件结束
+     1>已完成生成项目“D:\vs 比特\c++\20191125\20191125\20191125.vcxproj”(Rebuild 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:00.81
