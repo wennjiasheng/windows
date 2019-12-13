@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="909,408">
+    <VerticalLayout width="909" height="408" bkcolor="#FF00FFFF">
+        <VerticalLayout width="909" height="408" bkcolor="#FFFF00FF" bkcolor2="#00C0C0C0">
+            <VerticalLayout width="909" height="408">
+                <VerticalLayout width="909" height="408">
+                    <Control float="true" pos="877,4,0,0" width="29" height="39" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\FlashRes\frame_btn_close_normal.bmp" />
+                    <Control float="true" pos="842,4,0,0" width="29" height="39" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\GameRes\button_down.bmp" />
+                </VerticalLayout>
+            </VerticalLayout>
+        </VerticalLayout>
+    </VerticalLayout>
+</Window>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="844,461">
+    <Container width="516" height="400">
+        <VerticalLayout width="767" height="441">
+            <VerticalLayout width="767" height="441" bkcolor="#FFFF0000" bkcolor2="#00FF00FF" bordercolor="#000000FF" />
+        </VerticalLayout>
+    </Container>
+</Window>
