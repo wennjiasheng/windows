@@ -1,2 +1,0 @@
-#TargetFrameworkVersion=v4.0:PlatformToolSet=v120:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit
-Debug|Win32|D:\vs 比特\1. 将数组A中的内容和数组B中的内容进行交换。（数组一样大）\|

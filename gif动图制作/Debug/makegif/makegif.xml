@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="919,533">
+    <HorizontalLayout width="919" height="533" bkimage="D:\vs 比特\c++\Win32Project1\Debug\Win32Project1\22.jpg">
+        <HorizontalLayout width="919" height="533" bkcolor="#FFA6CAF0" bkcolor2="#00A6CAF0" bordercolor="#00C0DCC0" focusbordercolor="#00C0C0C0">
+            <Control float="true" pos="878,1,0,0" width="37" height="44" bkimage="D:\vs 比特\c++\Win32Project1\Debug\Win32Project1\frame_btn_close_normal.bmp" />
+            <Control float="true" pos="840,1,0,0" width="37" height="44" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\GameRes\button_over.bmp" />
+            <Control float="true" pos="802,1,0,0" width="37" height="44" bkimage="D:\vs 比特\c++\Win32Project1\Debug\Win32Project1\winbk.bmp" />
+        </HorizontalLayout>
+    </HorizontalLayout>
+</Window>

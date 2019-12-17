@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="919,533">
+    <VerticalLayout width="919" height="533" bkcolor="#FFC0C0C0">
+        <HorizontalLayout width="916" height="49" bkcolor="#FFA6CAF0">
+            <Button name="btn_min" float="true" pos="787,11,0,0" width="62" height="28" bkimage="file=&apos;C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\ListRes\max_min.png&apos; source=&apos;0,0,28,17&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" pushedimage="file=&apos;C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\ListRes\max_min_h.png&apos; source=&apos;0,0,28,17&apos;" />
+            <Button name="btn_close" float="true" pos="853,10,0,0" width="58" height="29" bkimage="file=&apos;C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\ListRes\max_min.png&apos; source=&apos;28,0,56,17&apos;" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" pushedimage="file=&apos;C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\ListRes\max_min_h.png&apos; source=&apos;28,0,56,17&apos;" />
+        </HorizontalLayout>
+        <HorizontalLayout width="919" height="41">
+            <Combo float="true" pos="37,8,0,0" width="116" height="31" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\GameRes\Combo_nor.bmp" itemtextcolor="#FF000000" itemselectedtextcolor="#FF000000" itemselectedbkcolor="#FFC1E3FF" itemhottextcolor="#FF000000" itemhotbkcolor="#FFE9F5FF" itemdisabledtextcolor="#FFCCCCCC" itemdisabledbkcolor="#FFFFFFFF" dropboxsize="0,150" />
+            <Edit name="edit_path" float="true" pos="196,10,0,0" width="211" height="28" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            <Button text="加载" float="true" pos="481,14,0,0" width="57" height="27" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\GameRes\button_over.bmp" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+        </HorizontalLayout>
+        <HorizontalLayout width="916" height="42">
+            <Edit float="true" pos="110,9,0,0" width="146" height="27" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            <Edit float="true" pos="364,8,0,0" width="146" height="27" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            <Button text="截取" float="true" pos="532,11,0,0" width="57" height="27" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\GameRes\button_over.bmp" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" align="center" />
+            <Label text=" start:" float="true" pos="56,9,0,0" width="47" height="28" bkcolor="#FFC0A0FF" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+            <Label text="  end:" float="true" pos="307,11,0,0" width="48" height="23" bkcolor="#FFC0A0FF" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+        </HorizontalLayout>
+        <HorizontalLayout width="417" height="398" bkimage="C:\Users\温家盛\Desktop\duilib-master\duilib-master\bin\skin\ListRes\list_header_bg.png" />
+        <Edit float="true" pos="435,146,0,0" width="456" height="367" bkcolor="#FFFFFFFF" textpadding="4,3,4,3" textcolor="#FF000000" disabledtextcolor="#FFA7A6AA" />
+    </VerticalLayout>
+</Window>
