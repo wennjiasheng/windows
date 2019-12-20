@@ -34,7 +34,57 @@ protected:
 			{
 				MessageBox(NULL, _T("最小化"), _T("测试"), IDOK);
 			}
+			else if (strName == _T("btn_cmd"))
+			{
+				GenerateGifWithPic();
+			}
 		}
+		else if (msg.sType == _T("itemselectchanged"))
+		{
+			CComboBoxUI* pComboselect = (CComboBoxUI*)m_PaintManager.FindControl(_T("combo_select"));
+			int iSelect = pComboselect->GetCurSel();
+			if (iSelect == 0)
+			{
+				MessageBox(NULL, _T("选择图片"), _T("测试"), IDOK);
+			}
+			else
+			{
+				MessageBox(NULL, _T("选择视频"), _T("测试"), IDOK);
+			}
+		}
+	}
+
+	void SendMessage(CDuiString strCMD)//给cmd发命令
+	{
+		SHELLEXECUTEINFO strSEInfo;
+		memset(&strSEInfo, 0, sizeof(strSEInfo));
+		strSEInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+		strSEInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+		strSEInfo.lpFile = _T("C:\\Windows\\System32");
+		strSEInfo.lpParameters = strCMD;
+		strSEInfo.nShow = SW_SHOW;
+		//给命令行发消息
+		ShellExecuteEx(&strSEInfo);
+		//等命令响应完成
+		WaitForSingleObject(strSEInfo.hProcess, INFINITE);
+		MessageBox(NULL, _T("命令完成"), _T("gif"), IDOK);
+	}
+	void GenerateGifWithPic()
+	{
+		CDuiString strPath = CPaintManagerUI::GetInstancePath();
+		strPath += _T("ffmppeg\\");
+		//构建命令
+		CDuiString strCMD;
+		
+		strCMD += _T("/c ");
+		strCMD += strPath;
+		strCMD += _T("ffmpeg -r 3 -i ");
+		strCMD += strPath;
+		strCMD += _T(".\\Pictrue\\%d.ipg ");
+		strCMD += strPath;
+		strCMD += _T("output.gif -y");
+		//给cmd发送命令
+		SendMessage(strCMD);
 	}
 
 };
