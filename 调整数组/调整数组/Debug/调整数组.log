@@ -1,0 +1,13 @@
+﻿生成启动时间为 2019/12/8 16:36:11。
+     1>项目“D:\vs 比特\c++\调整数组\调整数组\调整数组.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt "源.cpp"
+         源.cpp
+     1>d:\vs 比特\c++\调整数组\调整数组\源.cpp(71): warning C4804: “<<=”: 在操作中使用类型“bool”不安全
+     1>d:\vs 比特\c++\调整数组\调整数组\源.cpp(71): error C2105: “<<=”需要左值
+     1>d:\vs 比特\c++\调整数组\调整数组\源.cpp(71): fatal error C1903: 无法从以前的错误中恢复；正在停止编译
+     1>已完成生成项目“D:\vs 比特\c++\调整数组\调整数组\调整数组.vcxproj”(Rebuild 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:03.36
