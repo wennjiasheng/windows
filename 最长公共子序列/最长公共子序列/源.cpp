@@ -18,7 +18,7 @@ int main()
 		{
 			for (int j = 1; j < l2; j++)
 			{
-				if (s1[i] = s2[j])
+				if (s1[i] == s2[j])
 				{
 					ret[i][j] = ret[i - 1][j - 1] + 1;
 				}
