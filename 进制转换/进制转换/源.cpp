@@ -5,7 +5,7 @@
 using namespace std;
 int main()
 {
-	int num;//定义一个十进制数
+	int num;//
 	int n;//需要转化的进制数
 	cin >> num >> n;
 
