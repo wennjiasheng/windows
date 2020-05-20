@@ -179,10 +179,8 @@ void CtestmfcDlg::OnPaint()
 	}
 */
 #include <string>
-using namespace std;
 void CtestmfcDlg::OnBnClickedButton1()
 {
-	string s = "123";
 	// TODO: 在此添加控件通知处理程序代码
 
 	/*CString strTime;
@@ -233,6 +231,13 @@ void CtestmfcDlg::OnBnClickedButton1()
 	::SendMessage(hb,WM_LBUTTONUP,0,0);
 	AfxMessageBox("操作成功！！！");*/
 	HWND hwnd = ::FindWindow("#32770","Quick Connect");
+	//HWND hwnd = ::FindWindowExA(NULL,NULL,"WeChatLoginWndForPC","登录");
+	::SetWindowPos(hwnd,HWND_TOPMOST,0,0,1000,1000,SWP_SHOWWINDOW);
+/*	::SetForegroundWindow(hwnd);
+	::SetFocus(hwnd);
+	Sleep(10000);
+	::SendMessage(hwnd,WM_LBUTTONDOWN,0,0); 
+	::SendMessage(hwnd,WM_LBUTTONUP,0,0);*/	
 	hwnd = ::GetWindow(hwnd,GW_CHILD);
 	HWND h = ::GetWindow(hwnd,GW_HWNDLAST);//寻找hwnd最后一个兄弟窗口
 	h = ::GetWindow(h,GW_HWNDPREV);//寻找h前一个兄弟窗口
@@ -240,17 +245,76 @@ void CtestmfcDlg::OnBnClickedButton1()
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
 	hwnd = ::GetWindow(hwnd,GW_CHILD);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
-	::SendMessage(hwnd,WM_SETTEXT,11,(LPARAM)"10.1.198.67");
+	::SetForegroundWindow(hwnd);
+	::SetFocus(hwnd);
+	keybd_event('1',49, NULL, NULL);
+	 keybd_event('1',49,KEYEVENTF_KEYUP,0);
+	keybd_event('0',48, NULL, NULL);
+	keybd_event('0',48,KEYEVENTF_KEYUP,0);
+	keybd_event(110,0, NULL, NULL);
+	keybd_event(110,0,KEYEVENTF_KEYUP,0);
+	keybd_event('1',49, NULL, NULL);
+	keybd_event('1',49,KEYEVENTF_KEYUP,0);
+	keybd_event(110,0, NULL, NULL);
+	keybd_event(110,0,KEYEVENTF_KEYUP,0);
+	keybd_event('1',49, NULL, NULL);
+	keybd_event('1',49,KEYEVENTF_KEYUP,0);
+	keybd_event('9',57, NULL, NULL);
+	keybd_event('9',57,KEYEVENTF_KEYUP,0);
+	keybd_event('8',56, NULL, NULL);
+	keybd_event('8',56,KEYEVENTF_KEYUP,0);
+	keybd_event(110,0, NULL, NULL);
+	keybd_event(110,0,KEYEVENTF_KEYUP,0);
+	keybd_event('6',54, NULL, NULL);
+	keybd_event('6',54,KEYEVENTF_KEYUP,0);
+	keybd_event('7',55, NULL, NULL);
+	keybd_event('7',55,KEYEVENTF_KEYUP,0);
+	
+	//::SendMessage(hwnd,WM_SETTEXT,11,(LPARAM)"10.1.198.67");
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
-	::SendMessage(hwnd,WM_SETTEXT,2,(LPARAM)"22");
+	//::SendMessage(hwnd,WM_SETTEXT,2,(LPARAM)"22");
+	Sleep(1000);
+
+	::SetForegroundWindow(hwnd);
+	::SetFocus(hwnd);
+
+	keybd_event(50,0, NULL, NULL);
+	keybd_event(50,0,KEYEVENTF_KEYUP,0);
+	Sleep(1000);
+	keybd_event(50,0, NULL, NULL);
+	keybd_event(50,0,KEYEVENTF_KEYUP,0);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
 	hwnd = ::GetWindow(hwnd,GW_HWNDNEXT);
-	::SendMessage(hwnd,WM_SETTEXT,5,(LPARAM)"aiuap");
-	::SendMessage(h,WM_LBUTTONDOWN,0,0); 
-	::SendMessage(h,WM_LBUTTONUP,0,0);	
+	//::SendMessage(hwnd,WM_SETTEXT,5,(LPARAM)"aiuap");
+	Sleep(2000);
+
+	::SetForegroundWindow(hwnd);
+	::SetFocus(hwnd);
+	Sleep(1000);
+	keybd_event(VK_SHIFT,0x10,KEYEVENTF_KEYUP,0);
+	keybd_event(VK_SHIFT,0x10,KEYEVENTF_KEYUP,0);
+	keybd_event(65,0, NULL, NULL);
+	keybd_event(65,0, KEYEVENTF_KEYUP, NULL);
+	keybd_event(73,0, NULL, NULL);
+	keybd_event(73,0, KEYEVENTF_KEYUP, NULL);
+	keybd_event(85,0, NULL, NULL);
+	keybd_event(85,0, KEYEVENTF_KEYUP, NULL);
+	keybd_event(65,0, NULL, NULL);
+	keybd_event(65,0, KEYEVENTF_KEYUP, NULL);
+	keybd_event(80,0, NULL, NULL);
+	keybd_event(80,0, KEYEVENTF_KEYUP, NULL);
+	Sleep(5000);
+	keybd_event(VK_RETURN,13, NULL, NULL);
+	keybd_event(VK_RETURN,13, KEYEVENTF_KEYUP, NULL);
+	/*::SendMessage(h,WM_LBUTTONDOWN,0,0); 
+	::SendMessage(h,WM_LBUTTONUP,0,0);	*/
 	AfxMessageBox("操作成功！！！");
+
+	/*CString s(_T("123456789"));
+	ASSERT(!s.IsEmpty());
+	AfxMessageBox("YES");*/
 }
 
