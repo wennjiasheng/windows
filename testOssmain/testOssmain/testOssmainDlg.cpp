@@ -544,13 +544,107 @@ BOOL DeleteDirectory(LPCWSTR strDes)
 	RemoveDirectoryW(strDes);
 	return TRUE;
 }
-
 std::string ws2s(std::wstring& inputws)
 { 
 	return WChar2Ansi(inputws.c_str()); 
 }
-#include <sys/stat.h>
 
+BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTSTR chost,LPCTSTR cport,LPCTSTR cDbName)
+{
+	FILE * f = fopen(ws2s(jsonpath).c_str(),"w+");
+	if(f==NULL)
+	{
+		assert(0);
+		return false;
+	}
+	/*char* s="{\n\
+			  \"folders\": {},\n\
+			  \"connections\": {\n\
+			  \"postgresql-1426154947249-creator_ai4a\": {\n\
+			  \"provider\": \"postgresql\",\n\
+			  \"driver\": \"postgres-jdbc\",\n\
+			  \"name\": \"PostgreSQL_10.1.198.67 _5432_postgres\",\n\
+			  \"save-password\": true,\n\
+			  \"show-system-objects\": true,\n\
+			  \"read-only\": false,\n\
+			  \"configuration\": {\n\
+			  \"host\": \"10.1.198.67\",\n\
+			  \"port\": \"5432\",\n\
+			  \"database\": \"postgres\",\n\
+			  \"url\": \"jdbc:postgresql://10.1.198.67:5432/postgres\",\n\
+			  \"home\": \"postgresql_client\",\n\
+			  \"type\": \"dev\",\n\
+			  \"provider-properties\": {\n\
+			  \"@dbeaver-show-non-default-db@\": \"false\",\n\
+			  \"@dbeaver-show-template-db@\": \"false\",\n\
+			  \"postgresql.dd.plain.string\": \"false\",\n\
+			  \"postgresql.dd.tag.string\": \"false\"\n\
+			  },\n\
+			  \"handlers\": {}\n\
+			  }\n\
+			  }\n\
+			  },\n\
+			  \"connection-types\": {\n\
+			  \"dev\": {\n\
+			  \"name\": \"Development\",\n\
+			  \"color\": \"255,255,255\",\n\
+			  \"description\": \"Regular development database\",\n\
+			  \"auto-commit\": true,\n\
+			  \"confirm-execute\": false,\n\
+			  \"confirm-data-change\": false\n\
+			  }\n\
+			  }\n\
+			  }";*/
+	char * s = new char[1024];
+	sprintf(s,"{\n\
+	\"folders\": {},\n\
+	\"connections\": {\n\
+	\"postgresql-1426154947249-creator_ai4a\": {\n\
+	\"provider\": \"postgresql\",\n\
+	\"driver\": \"postgres-jdbc\",\n\
+	\"name\": \"PostgreSQL_%s_%s_%s\",\n\
+	\"save-password\": true,\n\
+	\"show-system-objects\": true,\n\
+	\"read-only\": false,\n\
+	\"configuration\": {\n\
+	\"host\": \"%s\",\n\
+	\"port\": \"%s\",\n\
+	\"database\": \"%s\",\n\
+	\"url\": \"jdbc:postgresql://10.1.198.67:5432/%s\",\n\
+	\"home\": \"postgresql_client\",\n\
+	\"type\": \"dev\",\n\
+	\"provider-properties\": {\n\
+	\"@dbeaver-show-non-default-db@\": \"false\",\n\
+	\"@dbeaver-show-template-db@\": \"false\",\n\
+	\"postgresql.dd.plain.string\": \"false\",\n\
+	\"postgresql.dd.tag.string\": \"false\"\n\
+	},\n\
+	\"handlers\": {}\n\
+	}\n\
+	}\n\
+	},\n\
+	\"connection-types\": {\n\
+	\"dev\": {\n\
+	\"name\": \"Development\",\n\
+	\"color\": \"255,255,255\",\n\
+	\"description\": \"Regular development database\",\n\
+	\"auto-commit\": true,\n\
+	\"confirm-execute\": false,\n\
+	\"confirm-data-change\": false\n\
+	}\n\
+	}\n\
+	}",chost,cport,cusername,chost,cport,cDbName,cDbName);
+	int size = fwrite(s,sizeof(char),strlen(s),f);
+	if(size<1)
+	{
+		return false;		
+	}
+	fclose(f);
+	return true;
+}
+
+#include <sys/stat.h>
+#include "./json/json.h"
 short LocalDbeaver4PostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
 {
 	//_asm{int 3};
@@ -570,9 +664,16 @@ short LocalDbeaver4PostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR
 	xmlPath.append(L"\\General");
 	
 	SHCreateDirectory(NULL, xmlPath.c_str());
+	/////// 写入Jsoncpp文件
+	std::wstring jsonpath = xmlPath;
+	jsonpath.append(L"\\.dbeaver\\data-sources.json");
+	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName))
+	{
+		AfxMessageBox("创建成功！！！！！");
+	}
 
 	string str_tmp = cPassWord;
-	CString strpassword = ax_asia_decryption(str_tmp.c_str());
+	CString strpassword = (str_tmp.c_str());
 	if(strpassword.GetLength() < 1)
 	{
 		log2file("Dbeaver4Postgresql工具使用了未加密的密码");
