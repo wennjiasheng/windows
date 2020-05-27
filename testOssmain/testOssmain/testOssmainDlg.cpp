@@ -1,12 +1,13 @@
 
+
 // testOssmainDlg.cpp : 实现文件
 //
-
 #include "stdafx.h"
 #include "testOssmain.h"
 #include "testOssmainDlg.h"
 #include "afxdialogex.h"
-
+#include<assert.h>
+#include<stdio.h>
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -64,6 +65,7 @@ BEGIN_MESSAGE_MAP(CtestOssmainDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CtestOssmainDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CtestOssmainDlg::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 
@@ -222,11 +224,11 @@ void log2file(char *fmt, ...)
 	struct tm *stm ;
 	time_t tt = time(NULL);
 	stm= localtime(&tt);
-	sprintf(timebuf, "%d[%04d-%02d-%02d %02d:%02d:%02d]:", GetCurrentProcessId(),stm->tm_year+1900,
+	sprintf_s(timebuf, "%d[%04d-%02d-%02d %02d:%02d:%02d]:", GetCurrentProcessId(),stm->tm_year+1900,
 		stm->tm_mon+1, stm->tm_mday, stm->tm_hour, stm->tm_min, stm->tm_sec);
 
 	char filename[250] = {0};
-	sprintf(filename, "C:\\asia_log\\testOssMain_%04d-%02d-%02d.log", stm->tm_year+1900,
+	sprintf_s(filename, "C:\\asia_log\\testOssMain_%04d-%02d-%02d.log", stm->tm_year+1900,
 		stm->tm_mon+1, stm->tm_mday);
 	fp = fopen(filename, "a+");
 	if(fp)
@@ -247,27 +249,14 @@ void log2file(char *fmt, ...)
 }
 
 
-void getXmlDirPath(std::wstring &filePath){
-	DWORD dwSize = 256;
-	wchar_t szHomeDir[256] = { 0 };
-	memset(szHomeDir, 0, dwSize);
-	HANDLE hToken = 0;
-	if (OpenProcessToken(GetCurrentProcess(), TOKEN_ALL_ACCESS, &hToken))
-	{
-		if (GetUserProfileDirectoryW(hToken, szHomeDir, &dwSize))
-		{
-			//filePath.append(szHomeDir).append(L"\\.dbeaver");Users\\温家盛\\AppData\\Roaming\\DBeaverData\\workspace6\\.metadata
-			filePath.append(szHomeDir).append(L"\\AppData\\Roaming\\DBeaverData\\workspace6");
-		}
-	}
-}
+
 //判断当前dbeaver是否已经配置了postgresql的jdbc驱动
 BOOL isInstallPostgreDiver(std::wstring &driverXmlPath,std::wstring &xmlPath)
 {
 	HANDLE pFile;
 	DWORD fileSize;
-	char *buffer,*tmpBuf;C:
-	DWORD dwBytesRead,dwBytesToRead,tmpLen;
+	char *buffer,*tmpBuf;
+	DWORD dwBytesRead,dwBytesToRead;
 	pFile = CreateFileW(driverXmlPath.c_str(),GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
 		//打开已存在的文件 
 		FILE_ATTRIBUTE_NORMAL, NULL); 
@@ -482,7 +471,7 @@ void OutputDebugPrintf(const char * strOutputString,...)
 	char strBuffer[4096]={0};
 	va_list vlArgs;
 	va_start(vlArgs,strOutputString);
-	_vsnprintf(strBuffer,sizeof(strBuffer)-1,strOutputString,vlArgs);
+	_vsnprintf_s(strBuffer,sizeof(strBuffer)-1,strOutputString,vlArgs);
 	//vsprintf(strBuffer,strOutputString,vlArgs);
 	va_end(vlArgs);
 	OutputDebugString(strBuffer);
@@ -549,105 +538,228 @@ std::string ws2s(std::wstring& inputws)
 	return WChar2Ansi(inputws.c_str()); 
 }
 
-BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTSTR chost,LPCTSTR cport,LPCTSTR cDbName)
-{
-	FILE * f = fopen(ws2s(jsonpath).c_str(),"w+");
-	if(f==NULL)
-	{
-		assert(0);
-		return false;
-	}
-	/*char* s="{\n\
-			  \"folders\": {},\n\
-			  \"connections\": {\n\
-			  \"postgresql-1426154947249-creator_ai4a\": {\n\
-			  \"provider\": \"postgresql\",\n\
-			  \"driver\": \"postgres-jdbc\",\n\
-			  \"name\": \"PostgreSQL_10.1.198.67 _5432_postgres\",\n\
-			  \"save-password\": true,\n\
-			  \"show-system-objects\": true,\n\
-			  \"read-only\": false,\n\
-			  \"configuration\": {\n\
-			  \"host\": \"10.1.198.67\",\n\
-			  \"port\": \"5432\",\n\
-			  \"database\": \"postgres\",\n\
-			  \"url\": \"jdbc:postgresql://10.1.198.67:5432/postgres\",\n\
-			  \"home\": \"postgresql_client\",\n\
-			  \"type\": \"dev\",\n\
-			  \"provider-properties\": {\n\
-			  \"@dbeaver-show-non-default-db@\": \"false\",\n\
-			  \"@dbeaver-show-template-db@\": \"false\",\n\
-			  \"postgresql.dd.plain.string\": \"false\",\n\
-			  \"postgresql.dd.tag.string\": \"false\"\n\
-			  },\n\
-			  \"handlers\": {}\n\
-			  }\n\
-			  }\n\
-			  },\n\
-			  \"connection-types\": {\n\
-			  \"dev\": {\n\
-			  \"name\": \"Development\",\n\
-			  \"color\": \"255,255,255\",\n\
-			  \"description\": \"Regular development database\",\n\
-			  \"auto-commit\": true,\n\
-			  \"confirm-execute\": false,\n\
-			  \"confirm-data-change\": false\n\
-			  }\n\
-			  }\n\
-			  }";*/
-	char * s = new char[1024];
-	sprintf(s,"{\n\
-	\"folders\": {},\n\
-	\"connections\": {\n\
-	\"postgresql-1426154947249-creator_ai4a\": {\n\
-	\"provider\": \"postgresql\",\n\
-	\"driver\": \"postgres-jdbc\",\n\
-	\"name\": \"PostgreSQL_%s_%s_%s\",\n\
-	\"save-password\": true,\n\
-	\"show-system-objects\": true,\n\
-	\"read-only\": false,\n\
-	\"configuration\": {\n\
-	\"host\": \"%s\",\n\
-	\"port\": \"%s\",\n\
-	\"database\": \"%s\",\n\
-	\"url\": \"jdbc:postgresql://10.1.198.67:5432/%s\",\n\
-	\"home\": \"postgresql_client\",\n\
-	\"type\": \"dev\",\n\
-	\"provider-properties\": {\n\
-	\"@dbeaver-show-non-default-db@\": \"false\",\n\
-	\"@dbeaver-show-template-db@\": \"false\",\n\
-	\"postgresql.dd.plain.string\": \"false\",\n\
-	\"postgresql.dd.tag.string\": \"false\"\n\
-	},\n\
-	\"handlers\": {}\n\
-	}\n\
-	}\n\
-	},\n\
-	\"connection-types\": {\n\
-	\"dev\": {\n\
-	\"name\": \"Development\",\n\
-	\"color\": \"255,255,255\",\n\
-	\"description\": \"Regular development database\",\n\
-	\"auto-commit\": true,\n\
-	\"confirm-execute\": false,\n\
-	\"confirm-data-change\": false\n\
-	}\n\
-	}\n\
-	}",chost,cport,cusername,chost,cport,cDbName,cDbName);
-	int size = fwrite(s,sizeof(char),strlen(s),f);
-	if(size<1)
-	{
-		return false;		
-	}
-	fclose(f);
-	return true;
-}
 
+//
 #include <sys/stat.h>
 #include "./json/json.h"
-short LocalDbeaver4PostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
+//short LocalDbeaver4PostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
+//{
+//	_asm{int 3};
+//	log2file("%s: %s %s %s %s %s %s %s",__FUNCTION__,sExecName,cUserName,cPassWord,cHost,cPort,cDbName,cCharSet);
+//	std::wstring xmlPath= L"";
+//	std::wstring driverXmlPath= L"";
+//	getXmlDirPath(xmlPath);
+//	std::wstring metadataPath = xmlPath;
+//	driverXmlPath = xmlPath;
+//	driverXmlPath.append(L"\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\drivers.xml");
+//	log2file("xml:%s",ws2s(driverXmlPath).c_str());
+//	if(!isInstallPostgreDiver(driverXmlPath,xmlPath))
+//	{
+//		::MessageBox(NULL, "没有给Dbeaver工具配置Postgresql的驱动", "提示", 0);
+//		return 0;
+//	}
+//	xmlPath.append(L"\\General");
+//	
+//	SHCreateDirectory(NULL, xmlPath.c_str());
+//	
+//
+//	string str_tmp = cPassWord;
+//	CString strpassword = (str_tmp.c_str());
+//	if(strpassword.GetLength() < 1)
+//	{
+//		log2file("Dbeaver4Postgresql工具使用了未加密的密码");
+//		strpassword = str_tmp.c_str();
+//	}
+//	char* encodedPwd = dbeaver_pwd_encode(strpassword.GetString(), strpassword.GetLength());
+//	tinyxml2::XMLDocument doc(false);
+//	xmlPath.append(L"\\.dbeaver-data-sources.xml");
+//	struct _stat buf;
+//	int result = _stat(ws2s(xmlPath).c_str(), &buf);
+//	OutputDebugPrintf("LocalDbeaver4PostgresqlLogin:xml路径:%s",ws2s(xmlPath).c_str());
+//	log2file("LocalDbeaver4PostgresqlLogin:xml路径:%s",ws2s(xmlPath).c_str());
+//	//log2file();
+//	if (result != 0)
+//	{
+//		metadataPath.append(L"\\.metadata\\.plugins\\org.eclipse.core.resources");
+//		//RemoveDirectoryW(metadataPath.c_str());
+//		//SHFILEOPSTRUCTW FileOp = { 0 };
+//		//FileOp.fFlags = FOF_ALLOWUNDO |   //允许放回回收站
+//		//	FOF_NOCONFIRMATION | FOF_SILENT; //不出现确认对话框
+//		//FileOp.pFrom = metadataPath.c_str();//L"C:\\Users\\zhangtx\\.dbeaver\\.metadata\\.plugins\\org.eclipse.core.resources";
+//		//FileOp.pTo = NULL;      //一定要是NULL
+//		//FileOp.wFunc = FO_DELETE;    //删除操作
+//		//result = SHFileOperationW(&FileOp);
+//		DeleteDirectory(metadataPath.c_str());
+//		//DeleteDirs(metadataPath.c_str());
+//		//::MessageBoxA(NULL, ws2s(metadataPath).c_str(),"Tips",MB_OK);
+//		//Sleep(500);
+//	}
+//	doc.LoadFile(ws2s(xmlPath).c_str());
+//	tinyxml2::XMLNode* root = doc.RootElement();
+//	if (!root)
+//	{
+//		doc.NewDeclaration();
+//		root = doc.InsertEndChild(doc.NewElement("data-sources"));
+//	}
+//	tinyxml2::XMLElement* curElement = root->FirstChildElement("data-source");
+//	tinyxml2::XMLElement* nextElement = NULL;
+//	while (curElement)
+//	{
+//		nextElement = curElement->NextSiblingElement();
+//		if (strstr(curElement->Attribute("id"), "creator_ai4a")){
+//			const char* txt = curElement->Value();
+//			doc.DeleteNode(curElement);
+//		}
+//		curElement = nextElement;
+//	}
+//	char* szBuf = (char*) malloc(2000);
+//	::memset(szBuf, 0, 2000);
+//	char szDbTitle[200] = { 0 };
+//	sprintf(szDbTitle, "PostgreSQL_%s_%s_%s", cHost, cPort, cDbName);
+//	char szDbUrl[200] = {0};
+//	sprintf(szDbUrl, "jdbc:postgresql://%s:%s/%s", cHost, cPort, cDbName);
+//	sprintf(szBuf, dbeaver_tmp_postgresql, "postgresql-1426154947249-creator_ai4a",
+//		szDbTitle, //dbname
+//		cHost, //host
+//		cPort, //port
+//		cDbName, //database
+//		szDbUrl, //url
+//		cUserName, //username
+//		encodedPwd //password
+//		);
+//	tinyxml2::XMLDocument docNode;
+//	docNode.Parse(szBuf);
+//	tinyxml2::XMLPrinter printer;
+//	docNode.Print(&printer);
+//	tinyxml2::XMLText* textNode = doc.NewText(printer.CStr());
+//	root->InsertFirstChild(textNode);
+//	doc.SaveFile(ws2s(xmlPath).c_str());
+//	free(szBuf);
+//	free(encodedPwd);
+//
+//	//以下为插入vertica数据库jar包的代码
+//	tinyxml2::XMLDocument doc1(false);
+//	doc1.LoadFile(ws2s(driverXmlPath).c_str());
+//	tinyxml2::XMLNode* root1 = doc1.RootElement();
+//	if(root1)
+//	{
+//		tinyxml2::XMLElement* providerNode=root1->FirstChildElement("provider");
+//		while(providerNode!=NULL)
+//		{
+//			const char *p = providerNode->Attribute("id");
+//			if(strcmp(providerNode->Attribute("id"),"generic")==0)
+//				break;
+//			providerNode=providerNode->NextSiblingElement();//下一个兄弟节点
+//		}
+//		if(providerNode)
+//		{
+//			tinyxml2::XMLElement* driverNode=providerNode->FirstChildElement("driver");
+//			while(driverNode!=NULL)
+//			{
+//				const char *p = providerNode->Attribute("id");
+//				if(strcmp(driverNode->Attribute("id"),"postgresql")==0)
+//					break;
+//				driverNode=driverNode->NextSiblingElement();//下一个兄弟节点
+//			}
+//			if(driverNode)
+//			{
+//				doc1.DeleteNode(driverNode);
+//			}
+//			tinyxml2::XMLElement* verticaNode = doc1.NewElement("driver");
+//			verticaNode->SetAttribute("id","postgresql");
+//			verticaNode->SetAttribute("custom ","false");
+//			verticaNode->SetAttribute("name ","PostgreSQL");
+//			verticaNode->SetAttribute("class ","org.postgresql.Driver");
+//			verticaNode->SetAttribute("url ","jdbc:vertica://{host}:{port}/{database}");
+//			verticaNode->SetAttribute("port ","5433");
+//			verticaNode->SetAttribute("description ","PostgreSQL standard driver");
+//			tinyxml2::XMLElement* verticaDriverNode = doc1.NewElement("library");
+//			verticaDriverNode->SetAttribute("path","C:\\Windows\\postgresql-9.1-901.jdbc4.jar");
+//			verticaNode->InsertEndChild(verticaDriverNode);
+//			providerNode->InsertEndChild(verticaNode);
+//
+//		}
+//	}
+//	doc1.SaveFile(ws2s(driverXmlPath).c_str());
+//
+//	/// 写入Jsoncpp文件
+//	std::wstring jsonpath ;
+//	getXmlDirPath(jsonpath);
+//	jsonpath.append(L"\\General");
+//	jsonpath.append(L"\\.dbeaver\\data-sources.json");
+//	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName))
+//	{
+//		AfxMessageBox("创建成功！！！！！");
+//	}
+//
+//	//启动dbeaver.exe软件
+//	HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
+//	if ((int) hInstance < 32)
+//	{
+//		char cTmp[255];
+//		sprintf(cTmp, "没有安装%s或者找不到%s(请重新设置环境变量)", sExecName, sExecName);
+//		::MessageBox(NULL, cTmp, "提示", 0);
+//		return -1;
+//	}
+//	return 0;
+//}
+BOOL isInstallPostgreDivero(std::wstring &driverXmlPath,std::wstring &xmlPath)
 {
-	//_asm{int 3};
+	HANDLE pFile;
+	DWORD fileSize;
+	char *buffer,*tmpBuf;
+	DWORD dwBytesRead,dwBytesToRead;
+	pFile = CreateFileW(driverXmlPath.c_str(),GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+		//打开已存在的文件 
+		FILE_ATTRIBUTE_NORMAL, NULL); 
+	if ( pFile == INVALID_HANDLE_VALUE) 
+	{ 
+		//printf("open file error!\n"); 
+		CloseHandle(pFile); 
+		driverXmlPath= L"";
+		driverXmlPath.append(L"C:\\Users\\温家盛\\AppData\\Roaming\\DBeaverData\\workspace6\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\drivers.xml");
+
+		pFile = CreateFileW(driverXmlPath.c_str(),GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL, NULL); 
+		if ( pFile == INVALID_HANDLE_VALUE) 
+		{
+			return FALSE; 
+		}
+	} 
+	fileSize = GetFileSize(pFile,NULL); 
+	//得到文件的大小 
+	buffer = (char *) malloc(fileSize+2); 
+	ZeroMemory(buffer,fileSize); 
+	dwBytesToRead = fileSize; 
+	dwBytesRead = 0; 
+	tmpBuf = buffer; 
+	do{ //循环读文件，确保读出完整的文件    
+		ReadFile(pFile,tmpBuf,dwBytesToRead,&dwBytesRead,NULL);
+		if (dwBytesRead == 0) 
+			break; 
+		dwBytesToRead -= dwBytesRead; 
+		tmpBuf += dwBytesRead;
+	} while (dwBytesToRead > 0); 
+	CloseHandle(pFile); 
+	//遍历是否安装了驱动
+	//log2file("\npostgres diver xml:%s\n",buffer);
+	if(strstr(buffer,"driver id")!=NULL)
+	{
+		free(buffer); 
+		return TRUE;
+	}
+
+	free(buffer); 
+	return FALSE;
+
+}
+
+
+
+short LocalDbeaverPostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
+{
+
+	/*_asm{int 3};
 	log2file("%s: %s %s %s %s %s %s %s",__FUNCTION__,sExecName,cUserName,cPassWord,cHost,cPort,cDbName,cCharSet);
 	std::wstring xmlPath= L"";
 	std::wstring driverXmlPath= L"";
@@ -656,154 +768,339 @@ short LocalDbeaver4PostgresqlLogin(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR
 	driverXmlPath = xmlPath;
 	driverXmlPath.append(L"\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\drivers.xml");
 	log2file("xml:%s",ws2s(driverXmlPath).c_str());
-	if(!isInstallPostgreDiver(driverXmlPath,xmlPath))
-	{
-		::MessageBox(NULL, "没有给Dbeaver工具配置Postgresql的驱动", "提示", 0);
-		return 0;
-	}
-	xmlPath.append(L"\\General");
+	*/
 	
-	SHCreateDirectory(NULL, xmlPath.c_str());
-	/////// 写入Jsoncpp文件
-	std::wstring jsonpath = xmlPath;
-	jsonpath.append(L"\\.dbeaver\\data-sources.json");
-	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName))
-	{
-		AfxMessageBox("创建成功！！！！！");
-	}
+	
+	// 写入Jsoncpp文件
+//	std::wstring jsonpath ;
+//	getXmlDirPath(jsonpath);
+//	jsonpath.append(L"\\General");
+//	jsonpath.append(L"\\.dbeaver\\data-sources.json");
+//	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName))
+//	{
+//		AfxMessageBox("创建成功！！！！！");
+//	}
+//
+//	//启动dbeaver.exe软件
+//	HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
+//	if ((int) hInstance < 32)
+//	{
+//		char cTmp[255];
+//		sprintf(cTmp, "没有安装%s或者找不到%s(请重新设置环境变量)", sExecName, sExecName);
+//		::MessageBox(NULL, cTmp, "提示", 0);
+//		return -1;
+//}
+return 0;
 
-	string str_tmp = cPassWord;
-	CString strpassword = (str_tmp.c_str());
-	if(strpassword.GetLength() < 1)
-	{
-		log2file("Dbeaver4Postgresql工具使用了未加密的密码");
-		strpassword = str_tmp.c_str();
-	}
-	char* encodedPwd = dbeaver_pwd_encode(strpassword.GetString(), strpassword.GetLength());
-	tinyxml2::XMLDocument doc(false);
-	xmlPath.append(L"\\.dbeaver-data-sources.xml");
-	struct _stat buf;
-	int result = _stat(ws2s(xmlPath).c_str(), &buf);
-	OutputDebugPrintf("LocalDbeaver4PostgresqlLogin:xml路径:%s",ws2s(xmlPath).c_str());
-	log2file("LocalDbeaver4PostgresqlLogin:xml路径:%s",ws2s(xmlPath).c_str());
-	//log2file();
-	if (result != 0)
-	{
-		metadataPath.append(L"\\.metadata\\.plugins\\org.eclipse.core.resources");
-		//RemoveDirectoryW(metadataPath.c_str());
-		//SHFILEOPSTRUCTW FileOp = { 0 };
-		//FileOp.fFlags = FOF_ALLOWUNDO |   //允许放回回收站
-		//	FOF_NOCONFIRMATION | FOF_SILENT; //不出现确认对话框
-		//FileOp.pFrom = metadataPath.c_str();//L"C:\\Users\\zhangtx\\.dbeaver\\.metadata\\.plugins\\org.eclipse.core.resources";
-		//FileOp.pTo = NULL;      //一定要是NULL
-		//FileOp.wFunc = FO_DELETE;    //删除操作
-		//result = SHFileOperationW(&FileOp);
-		DeleteDirectory(metadataPath.c_str());
-		//DeleteDirs(metadataPath.c_str());
-		//::MessageBoxA(NULL, ws2s(metadataPath).c_str(),"Tips",MB_OK);
-		//Sleep(500);
-	}
-	doc.LoadFile(ws2s(xmlPath).c_str());
-	tinyxml2::XMLNode* root = doc.RootElement();
-	if (!root)
-	{
-		doc.NewDeclaration();
-		root = doc.InsertEndChild(doc.NewElement("data-sources"));
-	}
-	tinyxml2::XMLElement* curElement = root->FirstChildElement("data-source");
-	tinyxml2::XMLElement* nextElement = NULL;
-	while (curElement)
-	{
-		nextElement = curElement->NextSiblingElement();
-		if (strstr(curElement->Attribute("id"), "creator_ai4a")){
-			const char* txt = curElement->Value();
-			doc.DeleteNode(curElement);
-		}
-		curElement = nextElement;
-	}
-	char* szBuf = (char*) malloc(2000);
-	::memset(szBuf, 0, 2000);
-	char szDbTitle[200] = { 0 };
-	sprintf(szDbTitle, "PostgreSQL_%s_%s_%s", cHost, cPort, cDbName);
-	char szDbUrl[200] = {0};
-	sprintf(szDbUrl, "jdbc:postgresql://%s:%s/%s", cHost, cPort, cDbName);
-	sprintf(szBuf, dbeaver_tmp_postgresql, "postgresql-1426154947249-creator_ai4a",
-		szDbTitle, //dbname
-		cHost, //host
-		cPort, //port
-		cDbName, //database
-		szDbUrl, //url
-		cUserName, //username
-		encodedPwd //password
-		);
-	tinyxml2::XMLDocument docNode;
-	docNode.Parse(szBuf);
-	tinyxml2::XMLPrinter printer;
-	docNode.Print(&printer);
-	tinyxml2::XMLText* textNode = doc.NewText(printer.CStr());
-	root->InsertFirstChild(textNode);
-	doc.SaveFile(ws2s(xmlPath).c_str());
-	free(szBuf);
-	free(encodedPwd);
-
-	////以下为插入vertica数据库jar包的代码
-	//tinyxml2::XMLDocument doc1(false);
-	//doc1.LoadFile(ws2s(driverXmlPath).c_str());
-	//tinyxml2::XMLNode* root1 = doc1.RootElement();
-	//if(root1)
-	//{
-	//	tinyxml2::XMLElement* providerNode=root1->FirstChildElement("provider");
-	//	while(providerNode!=NULL)
-	//	{
-	//		const char *p = providerNode->Attribute("id");
-	//		if(strcmp(providerNode->Attribute("id"),"generic")==0)
-	//			break;
-	//		providerNode=providerNode->NextSiblingElement();//下一个兄弟节点
-	//	}
-	//	if(providerNode)
-	//	{
-	//		tinyxml2::XMLElement* driverNode=providerNode->FirstChildElement("driver");
-	//		while(driverNode!=NULL)
-	//		{
-	//			const char *p = providerNode->Attribute("id");
-	//			if(strcmp(driverNode->Attribute("id"),"postgresql")==0)
-	//				break;
-	//			driverNode=driverNode->NextSiblingElement();//下一个兄弟节点
-	//		}
-	//		if(driverNode)
-	//		{
-	//			doc1.DeleteNode(driverNode);
-	//		}
-	//		tinyxml2::XMLElement* verticaNode = doc1.NewElement("driver");
-	//		verticaNode->SetAttribute("id","postgresql");
-	//		verticaNode->SetAttribute("custom ","false");
-	//		verticaNode->SetAttribute("name ","PostgreSQL");
-	//		verticaNode->SetAttribute("class ","org.postgresql.Driver");
-	//		verticaNode->SetAttribute("url ","jdbc:vertica://{host}:{port}/{database}");
-	//		verticaNode->SetAttribute("port ","5433");
-	//		verticaNode->SetAttribute("description ","PostgreSQL standard driver");
-	//		tinyxml2::XMLElement* verticaDriverNode = doc1.NewElement("library");
-	//		verticaDriverNode->SetAttribute("path","C:\\Windows\\postgresql-9.1-901.jdbc4.jar");
-	//		verticaNode->InsertEndChild(verticaDriverNode);
-	//		providerNode->InsertEndChild(verticaNode);
-
-	//	}
-	//}
-	//doc1.SaveFile(ws2s(driverXmlPath).c_str());
-
-	//启动dbeaver.exe软件
-	HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
-	if ((int) hInstance < 32)
-	{
-		char cTmp[255];
-		sprintf(cTmp, "没有安装%s或者找不到%s(请重新设置环境变量)", sExecName, sExecName);
-		::MessageBox(NULL, cTmp, "提示", 0);
-		return -1;
-	}
-	return 0;
 }
 void CtestOssmainDlg::OnBnClickedButton1()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	LocalDbeaver4PostgresqlLogin("C:\\Users\\温家盛\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\DBeaver Community\\DBeaver","postgres","postgres","10.1.198.67 ","5432","postgres",NULL);
+	//LocalDbeaver4PostgresqlLogin("C:\\Program Files\\DBeaver\\dbeaver.exe","grid_user@jfwg_test0_1#ob_test","grid_user","20.26.52.94","2883","grid_user",NULL);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTSTR chost,LPCTSTR cport,LPCTSTR cDbName,std::string driverid)
+{
+
+	FILE * f = fopen(ws2s(jsonpath).c_str(),"w+");
+	if(f==NULL)
+	{
+		assert(0);
+		return false;
+	}
+	CString strJson;
+	strJson.Format("{\n\
+		\"folders\": {},\n\
+		\"connections\": {\n\
+			\"77588B76-0F4D-A253-4019-927787747645-1724fe0356d-488a61675c3c9bc7\": {\n\
+				\"provider\": \"generic\",\n\
+					\"driver\": \"%s\",\n\
+					\"name\": \"OceanBase - A4\",\n\
+					\"save-password\": false,\n\
+					\"read-only\": false,\n\
+					\"configuration\": {\n\
+						\"url\": \"jdbc:oceanbase://<server>:<port>/<database>\",\n\
+							\"type\": \"dev\",\n\
+							\"properties\": {\n\
+								\"PORT\": \"%s\",\n\
+									\"HOST\": \"%s\",\n\
+									\"DBNAME\": \"%s\"\n\
+						},\n\
+						\"handlers\": {}\n\
+				}\n\
+			}\n\
+	},\n\
+		\"connection-types\": {\n\
+			\"dev\": {\n\
+				\"name\": \"Development\",\n\
+					\"color\": \"255,255,255\",\n\
+					\"description\": \"Regular development database\",\n\
+					\"auto-commit\": true,\n\
+					\"confirm-execute\": false,\n\
+					\"confirm-data-change\": false\n\
+			}\n\
+	},\n\
+		\"drivers\": {\n\
+			\"generic\": {\n\
+				\"%s\": {\n\
+					\"provider\": \"generic\",\n\
+						\"id\": \"%s\",\n\
+						\"name\": \"OceanBase\",\n\
+						\"class\": \"com.alipay.oceanbase.obproxy.mysql.jdbc.Driver\",\n\
+						\"url\": \"jdbc:oceanbase://<server>:<port>/<database>\",\n\
+						\"port\": \"%s\",\n\
+						\"custom\": true,\n\
+						\"embedded\": false,\n\
+						\"anonymous\": false,\n\
+						\"allowsEmptyPassword\": false,\n\
+						\"libraries\": {},\n\
+						\"driver-parameters\": {\n\
+							\"supports-indexes\": \"true\",\n\
+								\"all-objects-pattern\": \"%%\",\n\
+								\"quote-reserved-words\": \"true\",\n\
+								\"omit-schema\": \"false\",\n\
+								\"schema-filters-enabled\": \"false\",\n\
+								\"script-delimiter-redefiner\": \";\",\n\
+								\"supports-struct-cache\": \"true\",\n\
+								\"supports-truncate\": \"true\",\n\
+								\"omit-type-cache\": \"false\",\n\
+								\"split-procedures-and-functions\": \"false\",\n\
+								\"supports-stored-code\": \"true\",\n\
+								\"supports-references\": \"true\",\n\
+								\"omit-single-catalog\": \"false\",\n\
+								\"omit-single-schema\": \"false\",\n\
+								\"supports-scroll\": \"false\",\n\
+								\"omit-catalog\": \"false\",\n\
+								\"script-delimiter\": \";\",\n\
+								\"legacy-sql-dialect\": \"false\",\n\
+								\"script-delimiter-after-query\": \"false\",\n\
+								\"use-search-string-escape\": \"false\",\n\
+								\"supports-multiple-results\": \"false\",\n\
+								\"script-delimiter-after-block\": \"false\",\n\
+								\"ddl-drop-column-short\": \"false\",\n\
+								\"supports-limits\": \"true\",\n\
+								\"supports-select-count\": \"true\"\n\
+					}\n\
+				}\n\
+			}\n\
+	}\n\
+}",driverid.c_str(),cport,chost,cDbName,driverid.c_str(),driverid.c_str(),cport);
+	int size = fwrite(strJson.GetString(),sizeof(char),strJson.GetLength(),f);
+	if(size<1)
+	{
+		return false;		
+	}
+	fclose(f);
+	return true;
+}
+
+std::string  xmllianixii(const char* pFilename)
+{
+	tinyxml2::XMLDocument doc(false);
+	doc.LoadFile(pFilename);
+	tinyxml2::XMLNode* root = doc.RootElement();
+	if(root)
+	{
+
+		tinyxml2::XMLElement* curElement = root->FirstChildElement("provider");;
+		while(curElement)
+		{
+			string s = curElement->Attribute("id");
+			if(strstr(curElement->Attribute("id"),"generic"))
+			{
+				tinyxml2::XMLElement* nextElement =curElement->FirstChildElement("driver");
+				while(nextElement)
+				{
+					if(nextElement->Attribute("class")!=NULL)
+					{
+						if(strstr(nextElement->Attribute("class"),"com.alipay.oceanbase.obproxy.mysql.jdbc.Driver"))
+						{
+							std::string driverid = nextElement->Attribute("id");
+							return driverid;
+						}
+					}	
+					nextElement = nextElement->NextSiblingElement();
+				}
+			}
+
+			curElement = curElement->NextSiblingElement();
+		}
+	}
+	return NULL;
+}
+
+void getXmlDirPath(std::wstring &filePath){
+	DWORD dwSize = 256;
+	wchar_t szHomeDir[256] = { 0 };
+	memset(szHomeDir, 0, dwSize);
+	HANDLE hToken = 0;
+	if (OpenProcessToken(GetCurrentProcess(), TOKEN_ALL_ACCESS, &hToken))
+	{
+		if (GetUserProfileDirectoryW(hToken, szHomeDir, &dwSize))
+		{
+			//filePath.append(szHomeDir).append(L"\\.dbeaver");Users\\温家盛\\AppData\\Roaming\\DBeaverData\\workspace6\\.metadata
+			filePath.append(szHomeDir).append(L"\\AppData\\Roaming\\DBeaverData\\workspace6");
+			//filePath.append(szHomeDir).append(L"\\.dbeaver");
+		}
+	}
+}
+
+DWORD myLaunchAppAndWait(const char* pszProgram,
+	const char* pszCmdLine)
+{
+	char szFullCmdLine[MAX_PATH * 4];
+	PROCESS_INFORMATION pi;
+	STARTUPINFO si;
+
+	ZeroMemory(&pi,sizeof(pi));
+	ZeroMemory(&si,sizeof(si));
+	si.cb = sizeof(si);
+	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+	//因为文件名与命令参数之间有一个空格，字符串要以0结束，所以要+2
+	if(strlen(pszProgram) + (pszCmdLine? (strlen(pszCmdLine) + 2) : 0) < sizeof(szFullCmdLine))
+	{
+		strcpy(szFullCmdLine, pszProgram);
+		if(pszCmdLine)
+		{
+			strcat(szFullCmdLine, " ");
+			strcat(szFullCmdLine, pszCmdLine);
+		}
+		if(CreateProcess(NULL, szFullCmdLine, 
+			NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+		{
+			//进程加载时间
+			if (WaitForInputIdle(pi.hProcess, 30000) == 0)
+			{
+				//AfxMessageBox("进程加载完毕");
+			}
+			CloseHandle(pi.hThread);
+			CloseHandle(pi.hProcess);
+		}
+		else
+		{
+			char message[512];
+			sprintf(message,"启动程序%s失败", pszProgram);
+			::AfxMessageBox(message);
+		}
+
+	}
+	return pi.dwProcessId;
+}
+
+short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
+{
+	//HWND hwnd = (HWND)0x015A118E;
+	//int id = GetDlgCtrlID (hWnd) ;
+	//HWND EditHwnd = ::GetDlgItem(hWnd,id);
+	//OceanBase - A4
+
+	//hWnd= GetDlgItem("OceanBase - A4")->GetSafeHwnd();
+	//int hwnd =::SendMessage(hwnd, LVM_GETHEADER, 0, 0);TVM_EXPAND
+	//::SendMessage(hwnd,TVE_EXPAND, TVGN_ROOT, 0);
+	//HTREEITEM hRootItem = (HTREEITEM)::SendMessage(hwnd,TVM_GETNEXTITEM, TVGN_ROOT, 0);
+	//::SendMessage(hwnd,TVM_EXPAND,TVE_EXPAND,(long)hRootItem);
+
+	std::wstring xmlPath= L"";
+	std::wstring driverXmlPath= L"";
+	getXmlDirPath(xmlPath);
+	std::wstring metadataPath = xmlPath;
+	driverXmlPath = xmlPath;
+	driverXmlPath.append(L"\\.metadata\\.plugins\\org.jkiss.dbeaver.core\\drivers.xml");
+
+
+	std::string driverid = xmllianixii(ws2s(driverXmlPath).c_str());
+	if(driverid.c_str() == NULL)
+	{
+		::MessageBox(NULL, "没有给Dbeaver工具配置Postgresql的驱动", "提示", 0);
+		return 0;
+	}
+	std::wstring jsonpath ;
+	getXmlDirPath(jsonpath);
+	jsonpath.append(L"\\General");
+	jsonpath.append(L"\\.dbeaver\\data-sources.json");
+	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName,driverid))
+	{
+		AfxMessageBox("创建成功！！！！！");
+	}
+
+	//启动dbeaver.exe软件
+	//HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
+	
+	DWORD hInstance = myLaunchAppAndWait(sExecName," ");
+	if ((int) hInstance < 32)
+	{
+		char cTmp[255];
+		sprintf_s(cTmp, "没有安装%s或者找不到%s(请重新设置环境变量)", sExecName, sExecName);
+		::MessageBox(NULL, cTmp, "提示", 0);
+		return -1;
+	}
+	Sleep(10000);
+	HWND hWnd = ::FindWindow("SWT_Window0","DBeaver 6.3.5");
+	int i = 6;
+	while(i--)
+	{
+		hWnd = ::FindWindowEx(hWnd,0,"SWT_Window0",0);
+	}
+	
+	HWND hWnd1 = ::FindWindowEx(hWnd,0,"SWT_Window0",0);
+	 hWnd = ::FindWindowEx(hWnd,hWnd1,"SWT_Window0",0);
+	 i = 4;
+	 while(i--)
+	 {
+		 hWnd = ::FindWindowEx(hWnd,0,"SWT_Window0",0);
+	 }
+	 hWnd1 = ::FindWindowEx(hWnd,0,"SWT_Window0",0);
+	 hWnd = ::FindWindowEx(hWnd,hWnd1,"SWT_Window0",0);
+	HWND hwnd = ::FindWindowEx(hWnd,0,"SysTreeView32",0);
+	HTREEITEM hRootItem = (HTREEITEM)::SendMessage(hwnd,TVM_GETNEXTITEM, TVGN_ROOT, 0);
+	::SendMessage(hwnd,TVM_EXPAND,TVE_EXPAND,(long)hRootItem);
+
+	Sleep(2000);
+	HWND Hauthentication = ::FindWindow("#32770","\'OceanBase - A4\' 身份验证");
+	HWND HwndAffirm = ::FindWindowEx(Hauthentication,0,"SWT_Window0",0);
+	HWND Hwnd = ::FindWindowEx(HwndAffirm,0,"SWT_Window0",0);
+	HWND Haffirm = ::FindWindowEx(HwndAffirm,Hwnd,"SWT_Window0",0);
+	Haffirm = FindWindowEx(Haffirm,0,"Button","确定");
+	HWND yhpz = ::FindWindowEx(Hwnd,0,"SWT_GROUP","用户凭证: ");
+	HWND Hsave = ::FindWindowEx(Hwnd,yhpz,"Button","保存密码");
+	HWND Huser = ::FindWindowEx(yhpz,0,"Edit",0);
+	HWND Hpassword = ::FindWindowEx(yhpz,Huser,"Edit",0);
+	::SendMessage(Huser,WM_SETTEXT,sizeof(cUserName),(LPARAM)cUserName);
+	::SendMessage(Hpassword,WM_SETTEXT,sizeof(cPassWord),(LPARAM)cPassWord);
+	::SendMessage(Hsave,WM_LBUTTONDOWN,0,0);
+	::SendMessage(Hsave,WM_LBUTTONUP,0,0);
+	::SendMessage(Haffirm,WM_LBUTTONDOWN,0,0); 
+	::SendMessage(Haffirm,WM_LBUTTONUP,0,0);
+	//::SendMessage(hwnd,WM_NOTIFY,WM_LBUTTONDBLCLK,0);
+
+	return 0;
+}
+void CtestOssmainDlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	LocalDbeaverForOceabase("C:\\Users\\温家盛\\AppData\\Local\\DBeaver\\dbeaver.exe","grid_user@jfwg_test0_1#ob_test","grid_user","20.26.52.94","2883","grid_user",NULL);
+	//C:\\Program Files\\DBeaver\\dbeaver.exe
 }
