@@ -213,40 +213,6 @@ std::string WChar2Ansi(LPCWSTR pwszSrc)
 	return strTemp;
 }
 
-void log2file(char *fmt, ...)
-{
-	FILE *fp = NULL;
-	va_list args = NULL;
-	char sprint_buf[1024] = {0};
-
-
-	char timebuf[50] = {0};
-	struct tm *stm ;
-	time_t tt = time(NULL);
-	stm= localtime(&tt);
-	sprintf_s(timebuf, "%d[%04d-%02d-%02d %02d:%02d:%02d]:", GetCurrentProcessId(),stm->tm_year+1900,
-		stm->tm_mon+1, stm->tm_mday, stm->tm_hour, stm->tm_min, stm->tm_sec);
-
-	char filename[250] = {0};
-	sprintf_s(filename, "C:\\asia_log\\testOssMain_%04d-%02d-%02d.log", stm->tm_year+1900,
-		stm->tm_mon+1, stm->tm_mday);
-	fp = fopen(filename, "a+");
-	if(fp)
-	{
-		va_start(args, fmt);
-
-
-		//fprintf(fp, "[%s]:",timebuf);
-		fprintf(fp, timebuf);
-		vfprintf(fp, fmt, args);
-		fprintf(fp, "\n");
-		va_end(args);
-		fclose(fp);
-	}
-
-	return;
-
-}
 
 
 
@@ -357,7 +323,7 @@ CString  ax_asia_decryption(const char* lpSrc)
 	if (hLib == NULL)
 	{
 		//MessageBox("不能载入OCX文件!");
-		log2file("载入encode模块失败");
+		//log2file("载入encode模块失败");
 		DisplayErrorText(GetLastError());
 		//strlog.Format(_T("控件%s载入失败"),ocxpath);
 		//AppendLog(strlog);
@@ -383,7 +349,7 @@ CString  ax_asia_decryption(const char* lpSrc)
 	}
 	else
 	{
-		log2file("载入encode内函数失败");
+		//log2file("载入encode内函数失败");
 		DisplayErrorText(GetLastError());
 		//strlog.Format(_T("查找控件%s注册函数失败"),ocxpath);
 		//AppendLog(strlog);
@@ -822,10 +788,9 @@ void CtestOssmainDlg::OnBnClickedButton1()
 
 
 
-BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTSTR chost,LPCTSTR cport,LPCTSTR cDbName,std::string driverid)
+BOOL creatjson(std::string &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTSTR chost,LPCTSTR cport,LPCTSTR cDbName,std::string driverid,LPCTSTR cCharSet)
 {
-
-	FILE * f = fopen(ws2s(jsonpath).c_str(),"w+");
+	FILE * f = fopen(jsonpath.c_str(),"w+");
 	if(f==NULL)
 	{
 		assert(0);
@@ -835,10 +800,10 @@ BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTS
 	strJson.Format("{\n\
 		\"folders\": {},\n\
 		\"connections\": {\n\
-			\"77588B76-0F4D-A253-4019-927787747645-1724fe0356d-488a61675c3c9bc7\": {\n\
+			\"%s-1724fe0356d-488a61675c3c9bc7\": {\n\
 				\"provider\": \"generic\",\n\
 					\"driver\": \"%s\",\n\
-					\"name\": \"OceanBase - A4\",\n\
+					\"name\": \"%s\",\n\
 					\"save-password\": false,\n\
 					\"read-only\": false,\n\
 					\"configuration\": {\n\
@@ -907,7 +872,7 @@ BOOL creatjson(std::wstring &jsonpath,LPCTSTR cusername ,LPCTSTR cpassword,LPCTS
 				}\n\
 			}\n\
 	}\n\
-}",driverid.c_str(),cport,chost,cDbName,driverid.c_str(),driverid.c_str(),cport);
+}",driverid.c_str(),driverid.c_str(),cCharSet,cport,chost,cDbName,driverid.c_str(),driverid.c_str(),cport);
 	int size = fwrite(strJson.GetString(),sizeof(char),strJson.GetLength(),f);
 	if(size<1)
 	{
@@ -924,7 +889,6 @@ std::string  xmllianixii(const char* pFilename)
 	tinyxml2::XMLNode* root = doc.RootElement();
 	if(root)
 	{
-
 		tinyxml2::XMLElement* curElement = root->FirstChildElement("provider");;
 		while(curElement)
 		{
@@ -945,7 +909,6 @@ std::string  xmllianixii(const char* pFilename)
 					nextElement = nextElement->NextSiblingElement();
 				}
 			}
-
 			curElement = curElement->NextSiblingElement();
 		}
 	}
@@ -961,68 +924,49 @@ void getXmlDirPath(std::wstring &filePath){
 	{
 		if (GetUserProfileDirectoryW(hToken, szHomeDir, &dwSize))
 		{
-			//filePath.append(szHomeDir).append(L"\\.dbeaver");Users\\温家盛\\AppData\\Roaming\\DBeaverData\\workspace6\\.metadata
 			filePath.append(szHomeDir).append(L"\\AppData\\Roaming\\DBeaverData\\workspace6");
-			//filePath.append(szHomeDir).append(L"\\.dbeaver");
 		}
 	}
 }
 
-DWORD myLaunchAppAndWait(const char* pszProgram,
-	const char* pszCmdLine)
+void log2file(char *fmt, ...)
 {
-	char szFullCmdLine[MAX_PATH * 4];
-	PROCESS_INFORMATION pi;
-	STARTUPINFO si;
+	FILE *fp = NULL;
+	va_list args = NULL;
+	char sprint_buf[1024] = {0};
 
-	ZeroMemory(&pi,sizeof(pi));
-	ZeroMemory(&si,sizeof(si));
-	si.cb = sizeof(si);
-	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
-	//因为文件名与命令参数之间有一个空格，字符串要以0结束，所以要+2
-	if(strlen(pszProgram) + (pszCmdLine? (strlen(pszCmdLine) + 2) : 0) < sizeof(szFullCmdLine))
+
+	char timebuf[50] = {0};
+	struct tm *stm ;
+	time_t tt = time(NULL);
+	stm= localtime(&tt);
+	sprintf_s(timebuf, "%d[%04d-%02d-%02d %02d:%02d:%02d]:", GetCurrentProcessId(),stm->tm_year+1900,
+		stm->tm_mon+1, stm->tm_mday, stm->tm_hour, stm->tm_min, stm->tm_sec);
+
+	char filename[250] = {0};
+	sprintf_s(filename, "C:\\asia_log\\testOssMain_%04d-%02d-%02d.log", stm->tm_year+1900,
+		stm->tm_mon+1, stm->tm_mday);
+	fp = fopen(filename, "a+");
+	if(fp)
 	{
-		strcpy(szFullCmdLine, pszProgram);
-		if(pszCmdLine)
-		{
-			strcat(szFullCmdLine, " ");
-			strcat(szFullCmdLine, pszCmdLine);
-		}
-		if(CreateProcess(NULL, szFullCmdLine, 
-			NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
-		{
-			//进程加载时间
-			if (WaitForInputIdle(pi.hProcess, 30000) == 0)
-			{
-				//AfxMessageBox("进程加载完毕");
-			}
-			CloseHandle(pi.hThread);
-			CloseHandle(pi.hProcess);
-		}
-		else
-		{
-			char message[512];
-			sprintf(message,"启动程序%s失败", pszProgram);
-			::AfxMessageBox(message);
-		}
+		va_start(args, fmt);
 
+
+		//fprintf(fp, "[%s]:",timebuf);
+		fprintf(fp, timebuf);
+		vfprintf(fp, fmt, args);
+		fprintf(fp, "\n");
+		va_end(args);
+		fclose(fp);
 	}
-	return pi.dwProcessId;
+
+	return;
+
 }
 
 short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPassWord, LPCTSTR cHost, LPCTSTR cPort, LPCTSTR cDbName, LPCTSTR cCharSet)
 {
-	//HWND hwnd = (HWND)0x015A118E;
-	//int id = GetDlgCtrlID (hWnd) ;
-	//HWND EditHwnd = ::GetDlgItem(hWnd,id);
-	//OceanBase - A4
-
-	//hWnd= GetDlgItem("OceanBase - A4")->GetSafeHwnd();
-	//int hwnd =::SendMessage(hwnd, LVM_GETHEADER, 0, 0);TVM_EXPAND
-	//::SendMessage(hwnd,TVE_EXPAND, TVGN_ROOT, 0);
-	//HTREEITEM hRootItem = (HTREEITEM)::SendMessage(hwnd,TVM_GETNEXTITEM, TVGN_ROOT, 0);
-	//::SendMessage(hwnd,TVM_EXPAND,TVE_EXPAND,(long)hRootItem);
-
+	//log2file("%s: %s %s %s %s %s %s %s",__FUNCTION__,sExecName,cUserName,cPassWord,cHost,cPort,cDbName,cCharSet);
 	std::wstring xmlPath= L"";
 	std::wstring driverXmlPath= L"";
 	getXmlDirPath(xmlPath);
@@ -1040,16 +984,40 @@ short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPas
 	std::wstring jsonpath ;
 	getXmlDirPath(jsonpath);
 	jsonpath.append(L"\\General");
-	jsonpath.append(L"\\.dbeaver\\data-sources.json");
-	if(creatjson(jsonpath,cUserName,cPassWord,cHost,cPort, cDbName,driverid))
+	jsonpath.append(L"\\.dbeaver");
+	BOOL bIsNewProfile = FALSE;
+	//data-sources.json文件备份
+	std::string strProFile = ws2s(jsonpath) + "\\data-sources.json";
+	std::string strProFile_bak = ws2s(jsonpath) + "\\data-sources.json_bak";
+	//账号密码文件进行备份
+	std::string strProFile_aff = ws2s(jsonpath) + "\\credentials-config.json";
+	std::string strProFile_aff_bak = ws2s(jsonpath) + "\\credentials-config.json_bak";
+	if(!(::PathFileExistsA(strProFile.c_str())&&::PathFileExistsA(strProFile_aff.c_str())))//文件夹不存在则创建
 	{
-		AfxMessageBox("创建成功！！！！！");
+		bIsNewProfile = TRUE;
+	}
+	//如果不是新建的节点目录 需要先备份之前的
+	if(!bIsNewProfile)
+	{
+		//备份
+		MoveFileEx(strProFile.c_str(),strProFile_bak.c_str(),MOVEFILE_REPLACE_EXISTING);	
+		MoveFileEx(strProFile_aff.c_str(),strProFile_aff_bak.c_str(),MOVEFILE_REPLACE_EXISTING);
+	}
+
+	if(!creatjson(strProFile,cUserName,cPassWord,cHost,cPort, cDbName,driverid,cCharSet))
+	{
+		AfxMessageBox("创建失败！！！！！");
+		log2file("单点登录OceanBase失败，还原节点文件");
+		//备份
+		if(MoveFileEx(strProFile_bak.c_str(),strProFile.c_str(),MOVEFILE_REPLACE_EXISTING))
+		{
+		}
+		return -1;
 	}
 
 	//启动dbeaver.exe软件
-	//HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
-	
-	DWORD hInstance = myLaunchAppAndWait(sExecName," ");
+	HINSTANCE hInstance = ShellExecute(NULL, "open", sExecName, "", "", SW_SHOW);
+	//DWORD hInstance = myLaunchAppAndWait(sExecName," ");
 	if ((int) hInstance < 32)
 	{
 		char cTmp[255];
@@ -1057,8 +1025,23 @@ short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPas
 		::MessageBox(NULL, cTmp, "提示", 0);
 		return -1;
 	}
-	Sleep(10000);
-	HWND hWnd = ::FindWindow("SWT_Window0","DBeaver 6.3.5");
+	HWND hWnd;
+	int indextime = 20;
+	 while(indextime--)
+	 {	
+		 Sleep(1000);
+		 hWnd = ::FindWindow("SWT_Window0","DBeaver 6.3.5");
+		 if(hWnd)
+		 {
+			 break;
+		 }
+		 
+	 }
+	 if(indextime == 0)
+	 {
+		 ::MessageBox(NULL,"没有找到DBeaver 6.3.窗口","提示",0);
+		 return -1;
+	 }
 	int i = 6;
 	while(i--)
 	{
@@ -1075,11 +1058,47 @@ short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPas
 	 hWnd1 = ::FindWindowEx(hWnd,0,"SWT_Window0",0);
 	 hWnd = ::FindWindowEx(hWnd,hWnd1,"SWT_Window0",0);
 	HWND hwnd = ::FindWindowEx(hWnd,0,"SysTreeView32",0);
-	HTREEITEM hRootItem = (HTREEITEM)::SendMessage(hwnd,TVM_GETNEXTITEM, TVGN_ROOT, 0);
-	::SendMessage(hwnd,TVM_EXPAND,TVE_EXPAND,(long)hRootItem);
-
-	Sleep(2000);
-	HWND Hauthentication = ::FindWindow("#32770","\'OceanBase - A4\' 身份验证");
+	indextime = 20;
+	while (indextime--)
+	{
+		Sleep(1000);
+		HTREEITEM hRootItem = (HTREEITEM)::SendMessage(hwnd,TVM_GETNEXTITEM, TVGN_ROOT, 0);
+		if(hRootItem == NULL)
+			continue;
+		else
+		{
+			::SendMessage(hwnd,TVM_EXPAND,TVE_EXPAND,(long)hRootItem);
+			break;
+		}
+	}
+	if(indextime == 0)
+	{
+		::MessageBox(NULL,"没有找到SysTreeView32的根节点","提示",0);
+		return -1;
+	}
+	HWND Hauthentication;
+	string cCharSetstr = "\'";
+	cCharSetstr+=cCharSet;
+	cCharSetstr+="\' 身份验证";
+	char cCharSet_s[200] = { 0 };
+	sprintf(cCharSet_s, "\'%s\' 身份验证",cCharSet);
+	indextime = 2000;
+	while(indextime--)
+	{
+			Hauthentication = ::FindWindow("#32770",cCharSet_s);
+			if(Hauthentication)
+			{
+				break;
+			}
+			Sleep(10);
+	}
+	if(indextime == 0)
+	{
+		char cTmp[255];
+		sprintf_s(cTmp, "没有找到%s的根节点(请重新设置环境变量)",cCharSet_s);
+		::MessageBox(NULL,cTmp,"提示",0);
+		return -1;
+	}
 	HWND HwndAffirm = ::FindWindowEx(Hauthentication,0,"SWT_Window0",0);
 	HWND Hwnd = ::FindWindowEx(HwndAffirm,0,"SWT_Window0",0);
 	HWND Haffirm = ::FindWindowEx(HwndAffirm,Hwnd,"SWT_Window0",0);
@@ -1094,13 +1113,29 @@ short LocalDbeaverForOceabase(LPCTSTR sExecName, LPCTSTR cUserName, LPCTSTR cPas
 	::SendMessage(Hsave,WM_LBUTTONUP,0,0);
 	::SendMessage(Haffirm,WM_LBUTTONDOWN,0,0); 
 	::SendMessage(Haffirm,WM_LBUTTONUP,0,0);
-	//::SendMessage(hwnd,WM_NOTIFY,WM_LBUTTONDBLCLK,0);
+	DeleteFile(strProFile.c_str());
+	DeleteFile(strProFile_aff.c_str());
+	indextime = 20;
+	while(indextime)
+	{
+		if(::PathFileExistsA(strProFile.c_str()))
+		{
+			break;
+		}
+		Sleep(100);
 
+	}
+	log2file("单点登录OceanBase完成，还原节点文件");
+	//备份
+	if(MoveFileEx(strProFile_bak.c_str(),strProFile.c_str(),MOVEFILE_REPLACE_EXISTING))
+	{
+	}
+	MoveFileEx(strProFile_aff_bak.c_str(),strProFile_aff.c_str(),MOVEFILE_REPLACE_EXISTING);
 	return 0;
 }
 void CtestOssmainDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	LocalDbeaverForOceabase("C:\\Users\\温家盛\\AppData\\Local\\DBeaver\\dbeaver.exe","grid_user@jfwg_test0_1#ob_test","grid_user","20.26.52.94","2883","grid_user",NULL);
+	LocalDbeaverForOceabase("C:\\Users\\温家盛\\AppData\\Local\\DBeaver\\dbeaver.exe","grid_user@jfwg_test0_1#ob_test","grid_user","20.26.52.94","2883","grid_user","OceanBase - A4");
 	//C:\\Program Files\\DBeaver\\dbeaver.exe
 }

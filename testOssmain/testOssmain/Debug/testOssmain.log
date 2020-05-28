@@ -1,4 +1,4 @@
-﻿生成启动时间为 2020/5/27 17:44:31。
+﻿生成启动时间为 2020/5/28 10:56:11。
      1>项目“E:\亚信安全\亚信安全\Windows 程序\testOssmain\testOssmain\testOssmain.vcxproj”在节点 2 上(build 个目标)。
      1>InitializeBuildStatus:
          正在创建“Debug\testOssmain.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
@@ -19,6 +19,8 @@
      1>e:\亚信安全\亚信安全\windows 程序\testossmain\testossmain\testossmaindlg.cpp(989): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\亚信安全\vc\include\string.h(110) : 参见“strcat”的声明
      1>e:\亚信安全\亚信安全\windows 程序\testossmain\testossmain\testossmaindlg.cpp(1005): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 e:\亚信安全\vc\include\stdio.h(371) : 参见“sprintf”的声明
+     1>e:\亚信安全\亚信安全\windows 程序\testossmain\testossmain\testossmaindlg.cpp(1107): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
                  e:\亚信安全\vc\include\stdio.h(371) : 参见“sprintf”的声明
      1>e:\亚信安全\亚信安全\windows 程序\testossmain\testossmain\tinyxml2.h(374): warning C4345: 行为更改: 使用 () 形式的初始值设定项构造的 POD 类型的对象将被默认初始化
                  e:\亚信安全\亚信安全\windows 程序\testossmain\testossmain\tinyxml2.h(371): 编译类 模板 成员函数“void *tinyxml2::MemPoolT<SIZE>::Alloc(void)”时
@@ -91,4 +93,4 @@
 
 生成成功。
 
-已用时间 00:00:05.28
+已用时间 00:00:04.52
