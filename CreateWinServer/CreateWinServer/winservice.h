@@ -1,4 +1,5 @@
 //winservice.h
+#define _CRT_SECURE_NO_WARNINGS
 #if !defined(_WINSERVICE_H_) 
 #define _WINSERVICE_H_
 

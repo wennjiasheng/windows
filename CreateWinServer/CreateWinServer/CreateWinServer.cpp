@@ -31,7 +31,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int ret = 0;
 	if(argc > 1)
 	{
-		cmdline = argv[1];
+		cmdline = (char *)argv[1];
 	}
 	//	MessageBox(NULL,"xsa",NULL,NULL);
 

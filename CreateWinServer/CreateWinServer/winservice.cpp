@@ -58,7 +58,7 @@ BOOL Service_Install(LPCSTR svrname, LPCSTR txt, LPCSTR pathname)
 		size_t pathlen = strlen(pathname)+1;
 		LPSTR oldpath = (LPSTR)_alloca(pathlen);
 		if (Service_GetPath(svrname, oldpath, pathlen)) {
-			if (_tcscmp(oldpath, pathname) != 0) {
+			if (strcmp(oldpath, pathname) != 0) {
 				Service_Uninstall(svrname);
 			}
 		}
@@ -67,14 +67,14 @@ BOOL Service_Install(LPCSTR svrname, LPCSTR txt, LPCSTR pathname)
 	if (!hSCM) goto _Failed;
 	
 	//创建服务
-	hService = OpenService(hSCM, svrname, SERVICE_START );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_START );
 	
 	if (!hService) {
-		hService = CreateService(
+		hService = CreateServiceA(
 			hSCM, svrname, svrname,
 			SERVICE_ALL_ACCESS, SERVICE_WIN32_OWN_PROCESS,
 			SERVICE_AUTO_START, SERVICE_ERROR_NORMAL,
-			pathname, NULL, NULL, NULL, NULL, NULL);
+			(LPCSTR)pathname, NULL, NULL, NULL, NULL, NULL);
 		if (!hService) 
 			{
 				TLOG("\nRegister Service Main Function Error! err=%d", GetLastError());
@@ -105,13 +105,13 @@ BOOL Service_Start(LPCSTR svrname)
 	BOOL bRet = FALSE;
 	SC_HANDLE hService=(SC_HANDLE)INVALID_HANDLE_VALUE;
 	SC_HANDLE hSCM=(SC_HANDLE)INVALID_HANDLE_VALUE;
-	
+	//函数建立了一个到服务控制管理器的连接
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
-	
-	hService = OpenService(hSCM, svrname, SERVICE_START );	
+	//打开一个已经存在的服务
+	hService = OpenServiceA(hSCM, svrname, SERVICE_START );	
 	if (!hService) goto _Failed;
-	
+	//启动服务
 	if(!StartService(hService, 0 , 0)) goto _Failed;
 	
 	bRet = TRUE;
@@ -130,7 +130,7 @@ VOID Service_Stop(LPCSTR svrname)
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
 	
-	hService = OpenService(hSCM, svrname, SERVICE_STOP|SERVICE_QUERY_STATUS );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_STOP|SERVICE_QUERY_STATUS );
 	if (!hService) goto _Failed;
 
 	//停止服务
@@ -156,7 +156,7 @@ BOOL Service_Uninstall(LPCSTR svrname)
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
 	
-	hService = OpenService(hSCM, svrname, SERVICE_STOP | DELETE|SERVICE_QUERY_STATUS );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_STOP | DELETE|SERVICE_QUERY_STATUS );
 	if (!hService) goto _Failed;
 	
 	//停止服务
@@ -184,7 +184,7 @@ BOOL Service_Uninstall_NoWait(LPCSTR svrname)
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
 	
-	hService = OpenService(hSCM, svrname, SERVICE_STOP | DELETE|SERVICE_QUERY_STATUS );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_STOP | DELETE|SERVICE_QUERY_STATUS );
 	if (!hService) goto _Failed;
 	
 	//停止服务
@@ -215,7 +215,7 @@ BOOL Service_IsRunning(LPCSTR svrname)
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
 	
-	hService = OpenService(hSCM, svrname, SERVICE_STOP|SERVICE_QUERY_STATUS );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_STOP|SERVICE_QUERY_STATUS );
 	if (!hService) goto _Failed;
 	
 	if (!QueryServiceStatus(hService, &st)) goto _Failed;
@@ -242,7 +242,7 @@ BOOL Service_GetPath(LPCSTR svrname, LPSTR path, size_t len)
 	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 	if (!hSCM) goto _Failed;
 	
-	hService = OpenService(hSCM, svrname, SERVICE_QUERY_CONFIG );
+	hService = OpenServiceA(hSCM, svrname, SERVICE_QUERY_CONFIG );
 	if (!hService) goto _Failed;
 	
 	if (!QueryServiceConfig(hService, qsc, QSC_LEN, &nbytes)) goto _Failed;
@@ -340,7 +340,7 @@ VOID Service_Param_Invoke_ex(LPCSTR svrname, LPCSTR Param, LPCSTR txt,
 		char buf[1024];
 		printf("name :%s\n",svrname);
 		TLOG("\nBegin to Install %s", svrname);
-		GetModuleFileName(NULL, buf, sizeof(buf));
+		GetModuleFileNameA(NULL, buf, sizeof(buf));
 		if (Service_Install (svrname, txt, buf)) {
 			Service_Start(svrname);
 			TLOG("\nSucceed to Install %s", svrname);

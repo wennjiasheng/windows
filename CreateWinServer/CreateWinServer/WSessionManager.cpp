@@ -57,12 +57,62 @@ void WSessionManager::StopSessionManager()
 
 void WSessionManager::Run()
 {
-	int i=10;
-	while(i>0)
+	log2file1("WSessionManager %d",__LINE__);
+	log2file1("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	DWORD dwEventsFlag(0);
+	while(1)
 	{
-		log2file1("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		--i;
-		Sleep(1000);
+		if(WTSWaitSystemEvent(WTS_CURRENT_SERVER_HANDLE, 
+			WTS_EVENT_LOGOFF | WTS_EVENT_LOGON | WTS_EVENT_CONNECT | WTS_EVENT_DISCONNECT
+			,&dwEventsFlag))
+		{	
+			log2file1("WSessionManager %d",__LINE__);
+			printf("WSessionManager %d\n",__LINE__);
+
+
+			//if(isStarted)
+			//{
+			//	log2file("用户Windows系统试图启动两个Session");
+			//	Sleep(1500);
+			//	continue;
+			//}
+			if(dwEventsFlag==WTS_EVENT_NONE)
+			{
+				log2file1("WSessionManager break");
+				//break;
+				return;
+			}
+			if((WTS_EVENT_LOGON & dwEventsFlag) == WTS_EVENT_LOGON )
+			{
+				log2file1("WSessionManager %d (WTS_EVENT_LOGON & dwEventsFlag) == WTS_EVENT_LOGON ",__LINE__);
+			}
+			if((WTS_EVENT_LOGOFF & dwEventsFlag) == WTS_EVENT_LOGOFF)
+			{
+				log2file1("WSessionManager %d dwEventsFlag) == WTS_EVENT_LOGOFF",__LINE__);
+			}
+			if((WTS_EVENT_CONNECT & dwEventsFlag) == WTS_EVENT_CONNECT )
+			{
+				log2file1("WSessionManager %d dwEventsFlag) == WTS_EVENT_CONNECT",__LINE__);
+			}
+			if((WTS_EVENT_DISCONNECT & dwEventsFlag) == WTS_EVENT_DISCONNECT )
+			{
+				log2file1("WSessionManager %d dwEventsFlag) == WTS_EVENT_DISCONNECT",__LINE__);
+			}
+			if( (WTS_EVENT_LOGON & dwEventsFlag) == WTS_EVENT_LOGON 
+				||(WTS_EVENT_LOGOFF & dwEventsFlag) == WTS_EVENT_LOGOFF
+				||(WTS_EVENT_CONNECT & dwEventsFlag) == WTS_EVENT_CONNECT
+				||(WTS_EVENT_DISCONNECT & dwEventsFlag) == WTS_EVENT_DISCONNECT
+				)
+			{
+				log2file1("WSessionManager %d",__LINE__);
+				printf("WSessionManager %d\n",__LINE__);
+				log2file1("dwEventsFlag %x",dwEventsFlag);
+				log2file1("runfinish");
+			}
+		}
+		else
+		{
+			log2file1("WTSWaitSystemEvent fail");
+		}
 	}
-	log2file1("runfinish");
 }
